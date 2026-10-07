@@ -4,11 +4,70 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EduTech – Smart School Management</title>
-    <meta name="description" content="Manage students, teachers, attendance, fees, results and communication from one secure platform." />
+    <meta name="theme-color" content="#2563eb" />
+
+    <title>EduTech – School Management Software for Schools &amp; Universities</title>
+    <meta name="description" content="EduTech is a school and university management platform: students, teachers, attendance, fees, exam results, report cards and parent communication in one secure system. Request a demo." />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="%SITE_URL%/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="EduTech" />
+    <meta property="og:title" content="EduTech – School Management Software for Schools &amp; Universities" />
+    <meta property="og:description" content="Manage students, teachers, attendance, fees, results and communication from one secure platform." />
+    <meta property="og:url" content="%SITE_URL%/" />
+    <meta property="og:image" content="%SITE_URL%/og-image.png" />
+    <meta property="og:image:alt" content="EduTech school administration dashboard" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="EduTech – School Management Software" />
+    <meta name="twitter:description" content="Manage students, teachers, attendance, fees, results and communication from one secure platform." />
+    <meta name="twitter:image" content="%SITE_URL%/og-image.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "%SITE_URL%/#organization",
+            "name": "EduTech",
+            "url": "%SITE_URL%/",
+            "logo": "%SITE_URL%/favicon.svg"
+          },
+          {
+            "@type": "WebSite",
+            "@id": "%SITE_URL%/#website",
+            "url": "%SITE_URL%/",
+            "name": "EduTech",
+            "publisher": { "@id": "%SITE_URL%/#organization" },
+            "inLanguage": "en"
+          },
+          {
+            "@type": "SoftwareApplication",
+            "name": "EduTech",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Web",
+            "description": "School and university management platform covering students, teachers, attendance, fees, results, report cards and parent communication.",
+            "url": "%SITE_URL%/",
+            "publisher": { "@id": "%SITE_URL%/#organization" }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <main style="max-width:720px;margin:40px auto;padding:0 16px;font-family:sans-serif">
+        <h1>EduTech – School Management Software</h1>
+        <p>EduTech is a school and university management platform that brings students, teachers, parents, attendance, fees, exam results, report cards and communication together in one secure system.</p>
+        <ul>
+          <li><a href="/features">Features</a></li>
+          <li><a href="/docs">Documentation</a></li>
+        </ul>
+        <p>Please enable JavaScript to use this website.</p>
+      </main>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

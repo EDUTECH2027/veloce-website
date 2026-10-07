@@ -1,6 +1,10 @@
-import { useState, type FormEvent } from 'react'
+import LogoMark from './Logo'
+import { useEffect, useState, type FormEvent } from 'react'
 import './App.css'
 import adminShot from './assets/dashboard-admin.png'
+import Docs from './Docs'
+import Features from './Features'
+import { INSTITUTION_DETAILS, ROLE_DETAILS, SECTION_INTRO, WHY, type Detail } from './content'
 
 const LOGIN_URL = '#login' // TODO: point to the school-management platform login
 const DEMO_ENDPOINT = '/api/demo'
@@ -26,20 +30,6 @@ const FEATURES = [
   ['💰', 'Fees Management', ['Configure school fees', 'Track payments', 'Outstanding balances', 'Student payment history', 'Financial reports']],
   ['👨‍🏫', 'Teacher Management', ['Teacher profiles', 'Timetables', 'Attendance', 'Marks', 'Student behaviour comments', 'Salary information']],
   ['👨‍👩‍👧', 'Parent Portal', ["See children's results", 'Monitor attendance', 'View fees', 'Follow academic performance', 'Receive school communication']],
-] as const
-
-const SOLUTIONS = [
-  ['🏫', 'Primary Schools', 'Simple registration, attendance and report cards for younger learners.'],
-  ['📚', 'Secondary Schools', 'Subjects, coefficients, rankings and parent follow-up across every class.'],
-  ['🎓', 'Colleges', 'Structured academic records, timetables and fee tracking.'],
-  ['🏛️', 'Universities', 'Scalable administration for large cohorts and multiple departments.'],
-] as const
-
-const ROLES = [
-  ['👨‍💼', 'Administrator', 'Manage your entire school.'],
-  ['👨‍🏫', 'Teacher', 'Manage classes, marks & attendance.'],
-  ['👨‍🎓', 'Student', 'Follow your academic performance.'],
-  ['👨‍👩‍👧', 'Parent', 'Stay informed about your child.'],
 ] as const
 
 const STEPS = [
@@ -109,6 +99,47 @@ function Dashboard({ s }: { s: Screen }) {
   )
 }
 
+function DetailModal({ d, onClose }: { d: Detail; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    document.addEventListener('keydown', onKey)
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prev
+    }
+  }, [onClose])
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" aria-label="Close" onClick={onClose}>✕</button>
+        <div className="icon">{d.icon}</div>
+        <span className="eyebrow">{d.title}</span>
+        <h2 id="modal-title">{d.heading}</h2>
+        {d.intro.map((p) => <p key={p} className="modal-p">{p}</p>)}
+        {d.listTitle && <h4>{d.listTitle}</h4>}
+        {d.items[0]?.[1] ? (
+          <div className="detail-list">
+            {d.items.map(([t, x]) => <div key={t}><b>{t}</b><p>{x}</p></div>)}
+          </div>
+        ) : (
+          <ul className="chips">{d.items.map(([t]) => <li key={t}>{t}</li>)}</ul>
+        )}
+        <div className="outro">
+          <h4>{d.outroTitle}</h4>
+          {d.outro.map((p) => <p key={p}>{p}</p>)}
+        </div>
+        <div className="modal-actions">
+          <a className="btn btn-primary" href="#demo" onClick={onClose}>Request a Demo</a>
+          <button className="btn btn-ghost" onClick={onClose}>Close</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function DemoForm() {
   const [sent, setSent] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -161,15 +192,22 @@ function DemoForm() {
   )
 }
 
-export default function App() {
+function Site() {
   const [open, setOpen] = useState(false)
   const [tab, setTab] = useState(0)
+  const [detail, setDetail] = useState<Detail | null>(null)
+
+  // Links like /#demo from other pages: scroll once the content has rendered.
+  useEffect(() => {
+    const id = window.location.hash.slice(1)
+    if (id) document.getElementById(id)?.scrollIntoView()
+  }, [])
 
   return (
     <>
       <header className="nav">
         <div className="container nav-inner">
-          <a href="#top" className="logo"><span className="logo-mark">🎓</span>EduTech</a>
+          <a href="#top" className="logo"><LogoMark />EduTech</a>
           <nav className="nav-links">
             {NAV.map(([l, h]) => <a key={l} href={h}>{l}</a>)}
             <a href="#demo">Contact</a>
@@ -197,7 +235,7 @@ export default function App() {
               <p className="lead">Manage students, teachers, attendance, fees, results, communication and administration from one secure system.</p>
               <div className="hero-actions">
                 <a className="btn btn-primary btn-lg" href="#demo">Request a Demo</a>
-                <a className="btn btn-ghost btn-lg" href="#features">Explore Features</a>
+                <a className="btn btn-ghost btn-lg" href="/features">Explore Features</a>
               </div>
               <p className="hero-note">Already using EduTech? <a href={LOGIN_URL} style={{ color: 'var(--primary)', fontWeight: 600 }}>Log in →</a></p>
             </div>
@@ -239,25 +277,50 @@ export default function App() {
           <div className="container">
             <div className="section-head">
               <span className="eyebrow">Solutions</span>
-              <h2>Everyone gets the right experience.</h2>
-              <p>One product, tailored dashboards for every role in your school.</p>
+              <h2>{SECTION_INTRO.title}</h2>
+              {SECTION_INTRO.lead.map((p) => <p key={p} style={{ marginTop: 10 }}>{p}</p>)}
             </div>
+            <h3 className="group-title">Everyone gets the right experience</h3>
             <div className="grid g4" style={{ marginBottom: 56 }}>
-              {ROLES.map(([i, t, d]) => (
-                <div className="card" key={t} style={{ textAlign: 'center' }}>
-                  <div className="icon" style={{ margin: '0 auto 16px' }}>{i}</div>
-                  <h3>{t.toUpperCase()}</h3>
-                  <p>{d}</p>
-                </div>
+              {ROLE_DETAILS.map((d) => (
+                <button className="card card-btn" key={d.title} onClick={() => setDetail(d)} style={{ textAlign: 'center' }}>
+                  <div className="icon" style={{ margin: '0 auto 16px' }}>{d.icon}</div>
+                  <h3>{d.title.toUpperCase()}</h3>
+                  <p>{d.short}</p>
+                  <span className="more">Learn more →</span>
+                </button>
               ))}
             </div>
+            <h3 className="group-title">Designed for every type of institution</h3>
             <div className="grid g4">
-              {SOLUTIONS.map(([i, t, d]) => (
-                <div className="card" key={t}>
-                  <div className="icon">{i}</div>
-                  <h3>{t}</h3>
-                  <p>{d}</p>
-                </div>
+              {INSTITUTION_DETAILS.map((d) => (
+                <button className="card card-btn" key={d.title} onClick={() => setDetail(d)}>
+                  <div className="icon">{d.icon}</div>
+                  <h3>{d.title}</h3>
+                  <p>{d.short}</p>
+                  <span className="more">Learn more →</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section white" id="why">
+          <div className="container">
+            <div className="section-head">
+              <span className="eyebrow">Why EduTech</span>
+              <h2>{WHY.title}</h2>
+              <p>{WHY.lead}</p>
+            </div>
+            <div className="grid g3" style={{ marginBottom: 56 }}>
+              {WHY.shifts.map(([a, b]) => (
+                <div className="shift" key={a}><span>{a}</span><i>→</i><b>{b}</b></div>
+              ))}
+            </div>
+            <h3 className="group-title">{WHY.benefitsTitle}</h3>
+            <div className="grid g3">
+              {WHY.benefits.map(([i, t, d]) => (
+                <div className="card" key={t}><div className="icon">{i}</div><h3>{t}</h3><p>{d}</p></div>
               ))}
             </div>
           </div>
@@ -369,16 +432,18 @@ export default function App() {
         </section>
       </main>
 
+      {detail && <DetailModal d={detail} onClose={() => setDetail(null)} />}
+
       <footer className="footer">
         <div className="container">
           <div className="footer-grid">
             <div>
-              <div className="logo"><span className="logo-mark">🎓</span>EduTech</div>
+              <div className="logo"><LogoMark />EduTech</div>
               <p>Smart school management made simple.</p>
             </div>
             <div><h4>Product</h4><ul><li><a href="#features">Features</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#solutions">Solutions</a></li><li><a href="#how">How it works</a></li></ul></div>
             <div><h4>Company</h4><ul><li><a href="#about">About</a></li><li><a href="#demo">Contact</a></li><li><a href="#top">Careers</a></li></ul></div>
-            <div><h4>Resources</h4><ul><li><a href="#top">Documentation</a></li><li><a href="#top">Help Center</a></li><li><a href="#top">Blog</a></li></ul></div>
+            <div><h4>Resources</h4><ul><li><a href="/docs">Documentation</a></li><li><a href="#top">Help Center</a></li><li><a href="#top">Blog</a></li></ul></div>
             <div><h4>Legal</h4><ul><li><a href="#top">Privacy Policy</a></li><li><a href="#top">Terms of Service</a></li></ul>
               <h4 style={{ marginTop: 20 }}>Follow us</h4><ul><li><a href="#top">LinkedIn</a></li><li><a href="#top">Facebook</a></li><li><a href="#top">TikTok</a></li></ul></div>
           </div>
@@ -387,4 +452,16 @@ export default function App() {
       </footer>
     </>
   )
+}
+
+const route = () => {
+  const p = window.location.pathname.replace(/\/+$/, '')
+  return p === '/docs' ? 'docs' : p === '/features' ? 'features' : 'site'
+}
+
+export default function App() {
+  const page = route()
+  if (page === 'docs') return <Docs />
+  if (page === 'features') return <Features />
+  return <Site />
 }

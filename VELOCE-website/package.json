@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/seo.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "node --env-file=.env server/index.js"
+    "server": "node --env-file=.env server/index.js",
+    "docs:pdf": "node scripts/make-pdf.mjs"
   },
   "dependencies": {
     "express": "^5.2.1",
